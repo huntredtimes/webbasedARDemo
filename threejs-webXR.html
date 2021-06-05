@@ -14,6 +14,9 @@
         <button onclick="activateXR">Starte die WebXR-Session!</button>
         <script>
             async function activateXR(){
+
+                print("Button pressed...");
+
                 //Hinzufügen eines Canvas-Elements und eines WebGL-Kontext, der mit WebXR kompatibel ist
                 const canvas = document.createElement("canvas");
                 document.body.appendChild(canvas);
@@ -22,7 +25,7 @@
                 //aufmachen einer Szene (three.js)
                 const scene = new THREE.Scene();
 
-                //material festlegen (aber warum ist es so wie es ist???)
+                //material festlegen (jede Seite andere Farbe)
                 const materials = [
                     new THREE.MeshBasicMaterial({color: 0xff0000}),
                     new THREE.MeshBasicMaterial({color: 0x0000ff}),
