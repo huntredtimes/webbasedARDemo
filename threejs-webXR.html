@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <title>three.js and webXR</title>
+
+        <!--tree.js-->
+        <script src="https://unpkg.com/three@0.126.0/build/three.js"></script>
+    </head>
+    <body>
+        <!--Button, um WebXR-Session zu starten-->
+        <button onclick="activateXR()">Starte die WebXR-Session!</button>
+        <script>
+            async function activateXR(){
+                //Hinzufügen eines Canvas-Elements und eines WebGL-Kontext, der mit WebXR kompatibel ist
+                const canvas = document.createElement("canvas");
+                document.body.appendChild(canvas);
+                const gl = canvas.getContext("webgl", {xrCompatible: true});
+
+                //aufmachen einer Szene (three.js)
+                const scene = new THREE.Scene();
+
+                //material festlegen (aber warum ist es so wie es ist???)
+                const materials = [
+                    new THREE.MeshBasicMaterial({color: 0xff0000}),
+                    new THREE.MeshBasicMaterial({color: 0x0000ff}),
+                    new THREE.MeshBasicMaterial({color: 0x00ff00}),
+                    new THREE.MeshBasicMaterial({color: 0xff00ff}),
+                    new THREE.MeshBasicMaterial({color: 0x00ffff}),
+                    new THREE.MeshBasicMaterial({color: 0xffff00})
+                ];
+
+                //Würfel erstellen und der Szene hinzufügen
+                const cube = new THREE.Mesh(new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials);
+                cube.position.set(1,1,1);
+                scene.add(cube);
+
+                //setup WebGLRenderer
+                const renderer = new THREE.WebGLRenderer({
+                    alpha: true,
+                    preserveDrawingBuffer: true,
+                    canvas: canvas, //rendert auf die vorher definierte leinwand
+                    context: gl
+                });
+                renderer.autoClear = false;
+
+                //setup camera
+                const camera = new THREE.PerspectiveCamera();
+                camera.matrixAutoUpdate = false; // API übernimmt diese Aufgabe, deshalb muss sie Three.js untersagt werden ;)
+
+                //Initialisierung der WebXR-Session im "immersice-ar"- modus
+                const session = await navigator.xr.requestSession("immersive-ar");
+                session.updateRenderState({
+                    baseLayer: new XRWebGLLayer(session,gl)
+                });
+
+                //Initialisiere "reference-space", der nahe der position kreiert wird, an der die session gestartet wird
+                const referenceSpace = await session.requestReferenceSpace('local');
+
+                //Initialisiere Render-Loop, der erlaubt, über die AR-Ansicht zu malen
+                const onXRFrame = (time, frame) => {
+                    // Queue up the next draw request.
+                    session.requestAnimationFrame(onXRFrame);
+                    // Bind the graphics framebuffer to the baseLayer's framebuffer
+                    gl.bindFramebuffer(gl.FRAMEBUFFER, session.renderState.baseLayer.framebuffer)
+
+                    //Empfange die Gerät-Position
+                    const pose = frame.getViewerPose(referenceSpace);
+                    if(pose){
+                        const view = pose.views[0];
+                        const viewport = session.renderState.baseLayer.getViewport(view);
+                        renderer.setSize(viewport.width, viewport.height);
+
+                        //Konfiguration der Kamera mittels transform- und porjektions-matrix
+                        camera.matrix.fromArray(view.transform.matrix);
+                        camera.projectionMatrix.fromArray(view.projectionMatrix);
+                        camera.updateMatrixWorld(true);
+
+                        //RENDER!
+                        renderer.render(scene, camera);
+                    }
+                }
+                session.requestAnimationFrame(onXRFrame);
+            }
+        </script>
+    </body>
+</html>
