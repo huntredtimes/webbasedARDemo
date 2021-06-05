@@ -11,7 +11,7 @@
     </head>
     <body>
         <!--Button, um WebXR-Session zu starten-->
-        <button onclick="activateXR()">Starte die WebXR-Session!</button>
+        <button onclick="activateXR">Starte die WebXR-Session!</button>
         <script>
             async function activateXR(){
                 //Hinzufügen eines Canvas-Elements und eines WebGL-Kontext, der mit WebXR kompatibel ist
@@ -33,7 +33,7 @@
                 ];
 
                 //Würfel erstellen und der Szene hinzufügen
-                const cube = new THREE.Mesh(new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials);
+                const cube = new THREE.Mesh(new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), materials));
                 cube.position.set(1,1,1);
                 scene.add(cube);
 
