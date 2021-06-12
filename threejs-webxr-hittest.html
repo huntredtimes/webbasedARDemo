@@ -73,7 +73,7 @@ const material = new THREE.MeshBasicMaterial({color:0xffffff});
 const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), material);
 
 session.addEventListener("select", (event) => {
-    const clone = cube.clone();
+     const clone = cube.clone();
     clone.position.copy(reticle.position);
     scene.add(clone); 
 });
