@@ -64,7 +64,12 @@ loader.load("https://immersive-web.github.io/webxr-samples/media/gltf/reticle/re
   reticle = gltf.scene;
   reticle.visible = false;
   scene.add(reticle);
-})
+}) 
+
+let duck;
+loader.load("DemoModellEnte.glb", function(glb){
+  duck = glb.scene;
+}
 
 // The cube will be white
 const material = new THREE.MeshBasicMaterial({color:0xffffff});
@@ -73,7 +78,7 @@ const material = new THREE.MeshBasicMaterial({color:0xffffff});
 const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), material);
 
 session.addEventListener("select", (event) => {
-     const clone = cube.clone();
+     const clone = duck.clone();
     clone.position.copy(reticle.position);
     scene.add(clone); 
 });
