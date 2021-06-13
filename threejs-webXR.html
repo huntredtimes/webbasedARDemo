@@ -28,9 +28,16 @@ async function activateXR() {
 const material = new THREE.MeshBasicMaterial({color: 0xffffff});
 
 // Create the cube and add it to the demo scene.
-const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), material);
-cube.position.set(1, 1, 1);
-scene.add(cube);
+//const cube = new THREE.Mesh(new THREE.BoxBufferGeometry(0.2, 0.2, 0.2), material);
+//cube.position.set(1, 1, 1);
+//scene.add(cube);
+const loader = new THREE.GLTFLoader();
+let duck;
+loader.load("DemoModellEnte.glb", function(glb){
+  duck = glb.scene;
+  duck.mesh.scale.set(0.2,0.2,0.2);
+})
+scene.add(duck);
 
 // Set up the WebGLRenderer, which handles rendering to the session's base layer.
 const renderer = new THREE.WebGLRenderer({
